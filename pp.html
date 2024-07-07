@@ -1,0 +1,44 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Loan Approval Prediction</title>
+    <script>
+        function uploadFile() {
+            const formData = new FormData();
+            const fileField = document.querySelector('input[type="file"]');
+
+            formData.append('file', fileField.files[0]);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultArea = document.getElementById('results');
+                resultArea.innerHTML = '<h2>Predictions</h2><ul>';
+                data.predictions.forEach(prediction => {
+                    resultArea.innerHTML += '<li>' + prediction + '</li>';
+                });
+                resultArea.innerHTML += '</ul>';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            return false; // Prevent form submission
+        }
+    </script>
+</head>
+<body>
+    <h1>Loan Approval Prediction</h1>
+    <form onsubmit="return uploadFile()">
+        <label for="file">Upload Excel File:</label>
+        <input type="file" id="file" name="file" accept=".xlsx, .xls">
+        <button type="submit">Upload</button>
+    </form>
+    <div id="results"></div>
+</body>
+</html>
